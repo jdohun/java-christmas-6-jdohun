@@ -21,7 +21,6 @@ public final class Validator {
 
     public static int validateNumericInput(String inputValue) {
         Matcher matcher = PatternConstant.NUMBER_PATTERN.matcher(inputValue);
-
         if (!matcher.matches()) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_NOT_NUMERIC_VALUE);
         }
@@ -30,16 +29,14 @@ public final class Validator {
 
     public static String[] hasCommasWithoutSurroundingValues(String valuesSeparatedByCommas) {
         Matcher matcher = PatternConstant.HAS_COMMAS_WITHOUT_SURROUNDING_VALUES_PATTERNS.matcher(valuesSeparatedByCommas);
-
         if (matcher.find()) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_CONTAIN_CONSECUTIVE_COMMAS);
         }
-
         return valuesSeparatedByCommas.split(RegularConstant.INPUT_DELIMITER);
     }
 
     public static int validateDayInRange(int expectedVisitDate) {
-        if (expectedVisitDate > 31 || expectedVisitDate < 1) {
+        if (expectedVisitDate > RegularConstant.MONTH_LAST || expectedVisitDate < RegularConstant.MONTH_FIRST) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_OUT_OF_DAY);
         }
         return expectedVisitDate;
