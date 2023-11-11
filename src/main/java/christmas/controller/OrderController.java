@@ -3,7 +3,7 @@ package christmas.controller;
 import christmas.domain.validator.InputValidator;
 import christmas.utils.InputSupplier;
 
-public class Controller {
+public class OrderController {
 
     public void run() {
     }
