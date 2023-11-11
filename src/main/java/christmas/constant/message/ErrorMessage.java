@@ -10,7 +10,7 @@ public final class ErrorMessage {
     /**
      * 1 이상 31 이하의 날짜를 입력하지 않은 경우
      */
-    public static final String ERROR_OUT_OF_DAY = ERROR_MESSAGE_PREFIX + "유효하지 않은 날짜입니다. 다시 입력해 주세요.\n";
+    public static final String ERROR_OUT_OF_DAY_RANGE = ERROR_MESSAGE_PREFIX + "유효하지 않은 날짜입니다. 다시 입력해 주세요.\n";
 
     /**
      * 메뉴판에 없는 메뉴를 입력하는 경우
