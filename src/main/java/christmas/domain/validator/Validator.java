@@ -32,14 +32,13 @@ public final class Validator {
         if (matcher.find()) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_CONTAIN_CONSECUTIVE_COMMAS);
         }
-        return valuesSeparatedByCommas.split(RegularConstant.INPUT_DELIMITER);
+        return valuesSeparatedByCommas.split(RegularConstant.ORDER_LIST_DELIMITER);
     }
 
-    public static int validateDayInRange(int expectedVisitDate) {
+    public static void validateDayInRange(int expectedVisitDate) {
         if (expectedVisitDate > RegularConstant.MONTH_LAST || expectedVisitDate < RegularConstant.MONTH_FIRST) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_OUT_OF_DAY);
         }
-        return expectedVisitDate;
     }
 
 }
