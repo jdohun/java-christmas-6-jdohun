@@ -48,6 +48,17 @@ class ValidatorTest {
     @DisplayName("1~31 에 해당하는 숫자 아니면 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(ints = {0, -1, 32, 2023, 2022})
-    void validateDayInRange() {
+    void validateDayInRangeByInvalidValue(int inputDay) {
+        assertThatThrownBy(() -> Validator.validateDayInRange(inputDay))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(ErrorMessage.ERROR_OUT_OF_DAY_RANGE);
+    }
+
+    @DisplayName("1~31 에 해당하는 숫자면 예외가 발생하지 않는다.")
+    @ParameterizedTest
+    @ValueSource(ints = {1, 3, 31})
+    void validateDayInRangeValidValue(int inputDay) {
+        assertThatCode(() -> Validator.validateDayInRange(inputDay))
+                .doesNotThrowAnyException();
     }
 }
