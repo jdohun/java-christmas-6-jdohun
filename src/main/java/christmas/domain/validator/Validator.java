@@ -37,7 +37,7 @@ public final class Validator {
 
     public static void validateDayInRange(int expectedVisitDate) {
         if (expectedVisitDate > RegularConstant.MONTH_LAST || expectedVisitDate < RegularConstant.MONTH_FIRST) {
-            throw new IllegalArgumentException(ErrorMessage.ERROR_OUT_OF_DAY);
+            throw new IllegalArgumentException(ErrorMessage.ERROR_OUT_OF_DAY_RANGE);
         }
     }
 
