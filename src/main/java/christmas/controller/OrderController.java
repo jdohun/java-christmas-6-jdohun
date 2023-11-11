@@ -6,6 +6,7 @@ import christmas.utils.InputSupplier;
 public class OrderController {
 
     public void run() {
+        int expectedVisitDay = getInput(() -> InputValidator.validateInputDay());
     }
 
     private <T> T getInput(InputSupplier<T> inputSupplier) {
