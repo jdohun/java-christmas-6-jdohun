@@ -21,11 +21,11 @@ class ValidatorTest {
 
     @DisplayName("맨 앞자리가 0으로 시작하거나 숫자가 아닌 값이 입력되면 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"0", "원", "1000d"})
+    @ValueSource(strings = {"0", "일", "1000d"})
     void validateNumericInput(String notNumber) {
         assertThatThrownBy(() -> Validator.validateNumericInput(notNumber))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(ErrorMessage.ERROR_NOT_NUMERIC_VALUE);
+                .hasMessage(ErrorMessage.ERROR_INVALID_EXPECTED_DAY);
     }
 
     @DisplayName("쉼표 전후에 아무런 값이 없으면 예외가 발생한다.")
@@ -51,7 +51,7 @@ class ValidatorTest {
     void validateDayInRangeByInvalidValue(int inputDay) {
         assertThatThrownBy(() -> Validator.validateDayInRange(inputDay))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(ErrorMessage.ERROR_OUT_OF_DAY_RANGE);
+                .hasMessage(ErrorMessage.ERROR_INVALID_EXPECTED_DAY);
     }
 
     @DisplayName("1~31 에 해당하는 숫자면 예외가 발생하지 않는다.")
