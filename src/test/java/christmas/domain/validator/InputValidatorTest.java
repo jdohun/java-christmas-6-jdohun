@@ -1,5 +1,6 @@
 package christmas.domain.validator;
 
+import christmas.constant.Menu;
 import christmas.constant.message.ErrorMessage;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -7,7 +8,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.assertj.core.api.Assertions.*;
+import java.util.HashMap;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InputValidatorTest {
 
@@ -53,26 +57,66 @@ class InputValidatorTest {
     @DisplayName("빈 값을 입력하면 예외가 발생한다.")
     @ParameterizedTest
     @ValueSource(strings = {"", " ", "   "})
-    void validateInputOrderListByWhiteSpace(String whiteSpace) {
+    void validateInputOrderValueByWhiteSpace(String whiteSpace) {
         assertThatThrownBy(() -> InputValidator.validateInputOrderValue(whiteSpace))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ErrorMessage.ERROR_NOT_EXISTENT_VALUE);
     }
 
-    @DisplayName("메뉴판에 없는 메뉴를 입력하면 예외가 발생한다.")
+    @DisplayName("예시와 일치하지 않는 주문형식을 입력하면 예외가 발생한다.")
     @ParameterizedTest
-    @ValueSource(strings = {"해물-1", "파스타-1", "라따뚜이-1"})
-    void validateInputOrderListByNonExistentMenu(String nonExistentMenu) {
-        assertThatThrownBy(() -> InputValidator.validateInputOrderValue(nonExistentMenu))
+    @ValueSource(strings = {"해산물파스타-3, 레드와인/2, 초코케이크-2", "해산물파스타/3, 레드와인-2, 초코케이크-2", "해산물파스타-3, 레드와인-2, 초코케이크/2"})
+    void validateInputOrderValueByOutOfShape(String outOfShape) {
+        assertThatThrownBy(() -> InputValidator.validateInputOrderValue(outOfShape))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ErrorMessage.ERROR_INVALID_ORDER);
     }
 
-    @DisplayName("메뉴판에 있는 메뉴를 입력하면 예외가 발생하지 않는다.")
-    @ParameterizedTest
-    @ValueSource(strings = {"해산물파스타-1", "티본스테이크-1", "초코케이크-1"})
-    void validateInputOrderListByExistingMenu(String existingMenu) {
-        assertThatCode(() -> InputValidator.validateInputOrderValue(existingMenu))
-                .doesNotThrowAnyException();
+    @DisplayName("메뉴판에 없는 메뉴를 입력하면 예외가 발생한다.")
+    @Test
+    void validateInputOrderValueByNonExistentMenu() {
+        assertThatThrownBy(() -> InputValidator.validateInputOrderValue("해물-1, 파스타-1, 라따뚜이-1"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(ErrorMessage.ERROR_INVALID_ORDER);
     }
+
+    @DisplayName("한 번의 주문에 메뉴를 중복 입력하면 예외가 발생한다.")
+    @Test
+    void validateInputOrderValueByDuplicateMenu() {
+        assertThatThrownBy(() -> InputValidator.validateInputOrderValue("해산물파스타-1, 레드와인-2, 해산물파스타-2"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(ErrorMessage.ERROR_INVALID_ORDER);
+    }
+
+    @DisplayName("메뉴의 총수량이 20을 넘으면 예외가 발생한다.")
+    @Test
+    void validateInputOrderValueByOver20CountOfMenu() {
+        assertThatThrownBy(() -> InputValidator.validateInputOrderValue("해산물파스타-17, 레드와인-2, 초코케이크-2"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(ErrorMessage.ERROR_OVER_COUNT_OF_MENU);
+    }
+
+    @DisplayName("음료만 주문하면 예외가 발생한다.")
+    @Test
+    void validateInputOrderValueByOnlyBeverageOrdered() {
+        assertThatThrownBy(() -> InputValidator.validateInputOrderValue("레드와인-1, 샴페인-2, 제로콜라-2"))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(ErrorMessage.ERROR_ORDER_ONLY_BEVERAGE);
+    }
+
+    @DisplayName("올바른 형식으로 메뉴를 입력하면 주문 정보 객체를 반환한다.")
+    @Test
+    void validateInputOrderValueByExistingMenu() {
+        // given
+        HashMap<Menu, Integer> sample = new HashMap<>();
+        sample.put(Menu.SEAFOOD_PASTA, 2);
+        sample.put(Menu.RED_WINE, 1);
+        sample.put(Menu.CHOCOLATE_CAKE, 1);
+
+        // when
+        // then
+        assertThat(InputValidator.validateInputOrderValue("해산물파스타-2, 레드와인-1, 초코케이크-1"))
+                .isEqualTo(sample);
+    }
+
 }
