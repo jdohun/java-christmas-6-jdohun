@@ -1,20 +1,12 @@
 package christmas.controller;
 
-import christmas.domain.validator.InputValidator;
-import christmas.utils.InputSupplier;
-import christmas.view.InputView;
+import christmas.generator.OrderGenerator;
 
 public class OrderController {
+    private final OrderGenerator orderGenerator = new OrderGenerator();
 
     public void run() {
-        int expectedVisitDay = getInput(() -> InputValidator.validateInputDay(InputView.inputExpectedVisitDay()));
+        orderGenerator.run();
     }
 
-    private <T> T getInput(InputSupplier<T> inputSupplier) {
-        while (true) try {
-            return inputSupplier.get();
-        } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 }
