@@ -45,11 +45,13 @@ public final class Validator {
         }
     }
 
-    public static void validateMenuFormat(String separatedInputMenu) {
-        Matcher matcher = PatternConstant.MENU_PATTERN.matcher(separatedInputMenu);
+    public static String validateMenuFormat(String separatedInputMenu) {
+        String trimedSeparatedInputMenu = separatedInputMenu.trim();
+        Matcher matcher = PatternConstant.MENU_PATTERN.matcher(trimedSeparatedInputMenu);
         if (!matcher.matches()) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_INVALID_ORDER);
         }
+        return trimedSeparatedInputMenu;
     }
 
     public static Menu validateExistMenu(String targetMenu) {
