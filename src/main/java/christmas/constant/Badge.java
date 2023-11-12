@@ -6,21 +6,17 @@ public enum Badge {
         1만 원 이상: 트리
         2만 원 이상: 산타
      */
-    NONE("NONE", 0),
+    NONE("없음", 0),
     STAR("별", 5_000),
     TREE("트리", 10_000),
     SANTA("산타", 20_000);
 
-    private final String badge;
+    private final String name;
     private final int condition;
 
-    Badge(String badge, int condition) {
-        this.badge = badge;
+    Badge(String name, int condition) {
+        this.name = name;
         this.condition = condition;
-    }
-
-    public String getBadge() {
-        return badge;
     }
 
     public int getCondition() {
