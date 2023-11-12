@@ -2,7 +2,7 @@ package christmas.view;
 
 import christmas.constant.message.OutputMessage;
 
-public class OutputView {
+public final class OutputView {
     private OutputView() {
     }
 
