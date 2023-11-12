@@ -47,7 +47,7 @@ public final class Validator {
 
     public static void validateMenuFormat(String separatedInputMenu) {
         Matcher matcher = PatternConstant.MENU_PATTERN.matcher(separatedInputMenu);
-        if (matcher.find()) {
+        if (!matcher.matches()) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_INVALID_ORDER);
         }
     }
@@ -67,7 +67,7 @@ public final class Validator {
         }
     }
 
-    public static void validateOnlyBeverageOrder(HashMap<Menu, Integer> orderMenu) {
+    public static void validateIfOnlyBeverageOrdered(HashMap<Menu, Integer> orderMenu) {
         Set<Menu> menus = orderMenu.keySet();
         boolean appetizer = false;
         boolean main = false;
@@ -90,7 +90,7 @@ public final class Validator {
         }
     }
 
-    public static void validateDuplicateMenu(HashMap<Menu, Integer> orderMenu, Menu menu) {
+    public static void validateExistDuplicateMenu(HashMap<Menu, Integer> orderMenu, Menu menu) {
         if (orderMenu.containsKey(menu)) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_INVALID_ORDER);
         }
