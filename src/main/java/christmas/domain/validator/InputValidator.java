@@ -29,8 +29,8 @@ public final class InputValidator {
         int menuCount = 0;
 
         for (String separatedInputMenu : splitInputOrderMenu) {
-            Validator.validateMenuFormat(separatedInputMenu);
-            String[] menuNameWithCount = separatedInputMenu.split(RegularConstant.MENU_DELIMITER);
+            String trimedSeparatedInputMenu = Validator.validateMenuFormat(separatedInputMenu);
+            String[] menuNameWithCount = trimedSeparatedInputMenu.split(RegularConstant.MENU_DELIMITER);
             Menu menu = Validator.validateExistMenu(menuNameWithCount[0]);
             Validator.validateExistDuplicateMenu(orderMenu, menu);
             orderMenu.put(menu, Integer.parseInt(menuNameWithCount[1]));
