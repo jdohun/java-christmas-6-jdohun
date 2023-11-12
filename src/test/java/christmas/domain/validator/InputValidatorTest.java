@@ -30,7 +30,7 @@ class InputValidatorTest {
     void validateInputDayByInvalidValue(String input) {
         assertThatThrownBy(() -> InputValidator.validateInputDay(input))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(ErrorMessage.ERROR_OUT_OF_DAY_RANGE);
+                .hasMessage(ErrorMessage.ERROR_INVALID_EXPECTED_DAY);
     }
 
     @DisplayName("공백만 입력되면 예외가 발생한다.")
@@ -48,7 +48,7 @@ class InputValidatorTest {
     void validateInputDayByNotNumericValue(String input) {
         assertThatThrownBy(() -> InputValidator.validateInputDay(input))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(ErrorMessage.ERROR_NOT_NUMERIC_VALUE);
+                .hasMessage(ErrorMessage.ERROR_INVALID_EXPECTED_DAY);
     }
 
     @Test
