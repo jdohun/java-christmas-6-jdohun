@@ -36,7 +36,7 @@ public final class Validator {
         if (matcher.find()) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_CONTAIN_CONSECUTIVE_COMMAS);
         }
-        return valuesSeparatedByCommas.split(RegularConstant.ORDER_LIST_DELIMITER);
+        return valuesSeparatedByCommas.split(RegularConstant.ORDER_DELIMITER);
     }
 
     public static void validateDayInRange(int expectedVisitDate) {

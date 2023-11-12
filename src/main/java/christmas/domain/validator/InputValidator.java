@@ -19,7 +19,7 @@ public final class InputValidator {
     public static HashMap<Menu, Integer> validateInputOrderValue(String inputOrderMenu) {
         Validator.validateExistValue(inputOrderMenu);
         Validator.hasCommasWithoutSurroundingValues(inputOrderMenu);
-        String[] splitInputOrderMenu = inputOrderMenu.split(RegularConstant.ORDER_LIST_DELIMITER);
+        String[] splitInputOrderMenu = inputOrderMenu.split(RegularConstant.ORDER_DELIMITER);
 
         return validateOrderPolicy(splitInputOrderMenu);
     }
@@ -32,13 +32,13 @@ public final class InputValidator {
             Validator.validateMenuFormat(separatedInputMenu);
             String[] menuNameWithCount = separatedInputMenu.split(RegularConstant.MENU_DELIMITER);
             Menu menu = Validator.validateExistMenu(menuNameWithCount[0]);
-            Validator.validateDuplicateMenu(orderMenu, menu);
+            Validator.validateExistDuplicateMenu(orderMenu, menu);
             orderMenu.put(menu, Integer.parseInt(menuNameWithCount[1]));
             menuCount += Integer.parseInt(menuNameWithCount[1]);
             Validator.validateMenuCount(menuCount);
         }
 
-        Validator.validateOnlyBeverageOrder(orderMenu);
+        Validator.validateIfOnlyBeverageOrdered(orderMenu);
 
         return orderMenu;
     }
