@@ -11,9 +11,10 @@ public final class ErrorMessage {
     public static final String ERROR_CONTAIN_CONSECUTIVE_COMMAS = ERROR_MESSAGE_PREFIX + "쉼표(,) 전후에 값이 없는 경우가 존재합니다. 다시 입력해 주세요.\n";
 
     /**
-     * 1 이상 31 이하의 날짜를 입력하지 않은 경우
+     * 방문할 날짜에 숫자가 입력되지 않은 경우
+     * 1 이상 31 이하의 숫자를 입력하지 않은 경우
      */
-    public static final String ERROR_OUT_OF_DAY_RANGE = ERROR_MESSAGE_PREFIX + "유효하지 않은 날짜입니다. 다시 입력해 주세요.\n";
+    public static final String ERROR_INVALID_EXPECTED_DAY = ERROR_MESSAGE_PREFIX + "유효하지 않은 날짜입니다. 다시 입력해 주세요.\n";
 
     /**
      * 메뉴판에 없는 메뉴를 입력하는 경우
