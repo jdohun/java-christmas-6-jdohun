@@ -6,6 +6,7 @@ import christmas.constant.PatternConstant;
 import christmas.constant.RegularConstant;
 import christmas.constant.message.ErrorMessage;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -95,6 +96,17 @@ public final class Validator {
     public static void validateExistDuplicateMenu(HashMap<Menu, Integer> orderMenu, Menu menu) {
         if (orderMenu.containsKey(menu)) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_INVALID_ORDER);
+        }
+    }
+
+    public static void validateCountOfMenu(HashMap<Menu, Integer> orderMenu) {
+        int totalCountOfMenus = 0;
+        Collection<Integer> quantityOfEachMenu = orderMenu.values();
+        for (int count : quantityOfEachMenu) {
+            totalCountOfMenus += count;
+        }
+        if (totalCountOfMenus > 20) {
+            throw new IllegalArgumentException(ErrorMessage.ERROR_OVER_COUNT_OF_MENU);
         }
     }
 }
