@@ -128,7 +128,7 @@ class ValidatorTest {
                 .hasMessage(ErrorMessage.ERROR_OVER_COUNT_OF_MENU);
     }
 
-    @DisplayName("총메뉴 개수가 20을 넘지 않으면 예외가 발생한다.")
+    @DisplayName("총메뉴 개수가 20을 넘지 않으면 예외가 발생하지 않는다.")
     @Test
     void validateExistMenuByBelow20() {
         assertThatCode(() -> Validator.validateMenuCount(20))
@@ -167,6 +167,37 @@ class ValidatorTest {
         assertThatThrownBy(() -> Validator.validateExistDuplicateMenu(sample, Menu.T_BONE_STEAK))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage(ErrorMessage.ERROR_INVALID_ORDER);
+    }
+
+    @DisplayName("총메뉴 개수가 20을 넘으면 예외가 발생한다.")
+    @Test
+    void validateCountOfMenuByOver20() {
+        // given
+        HashMap<Menu, Integer> sample = new HashMap<>();
+        sample.put(Menu.ZERO_COKE, 12);
+        sample.put(Menu.T_BONE_STEAK, 8);
+        sample.put(Menu.CHAMPAGNE, 1);
+
+        // when
+        // then
+        assertThatThrownBy(() -> Validator.validateCountOfMenu(sample))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(ErrorMessage.ERROR_OVER_COUNT_OF_MENU);
+    }
+
+    @DisplayName("총메뉴 개수가 20을 넘지 않으면 예외가 발생하지 않는다.")
+    @Test
+    void validateCountOfMenuByBelow20() {
+        // given
+        HashMap<Menu, Integer> sample = new HashMap<>();
+        sample.put(Menu.ZERO_COKE, 12);
+        sample.put(Menu.T_BONE_STEAK, 7);
+        sample.put(Menu.CHAMPAGNE, 1);
+
+        // when
+        // then
+        assertThatCode(() -> Validator.validateCountOfMenu(sample))
+                .doesNotThrowAnyException();
     }
 
 }
