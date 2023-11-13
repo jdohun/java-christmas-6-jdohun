@@ -31,7 +31,7 @@ public enum Menu {
     CHAMPAGNE(MenuCategory.BEVERAGE, "샴페인", 25_000),
 
     GIVEAWAY_NONE(MenuCategory.GIVEAWAY, "없음", 0),
-    GIVEAWAY_CHAMPAGNE(MenuCategory.GIVEAWAY, CHAMPAGNE.getName(), CHAMPAGNE.getPrice());
+    GIVEAWAY_CHAMPAGNE(MenuCategory.GIVEAWAY, CHAMPAGNE.getName(), -CHAMPAGNE.getPrice());
 
     private final String category;
     private final String name;
