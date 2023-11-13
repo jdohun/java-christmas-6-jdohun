@@ -1,5 +1,7 @@
 package christmas.constant.message;
 
+import christmas.constant.Menu;
+
 public enum OutputMessage {
     PREVIEW_EVENT_BENEFITS_FORMAT("12월 %d일에 우테코 식당에서 받을 이벤트 혜택 미리 보기!\n"),
     PREVIEW_ORDER_MENU_FORMAT("%s %d개"),
@@ -20,6 +22,9 @@ public enum OutputMessage {
     }
 
     public String getOrderMenuFormat(String menuName, int countOfMenu) {
+        if(menuName.equals(Menu.GIVEAWAY_NONE.getName())){
+            return menuName;
+        }
         return String.format(this.messageFormat, menuName, countOfMenu);
     }
 
