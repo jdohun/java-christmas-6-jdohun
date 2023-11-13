@@ -1,6 +1,7 @@
 package christmas.domain.model;
 
 import christmas.constant.Menu;
+import christmas.domain.validator.Validator;
 
 import java.util.HashMap;
 
@@ -9,6 +10,9 @@ public class OrderInfo {
     private HashMap<Menu, Integer> orderMenu;
 
     public OrderInfo(int expectedVisitDay, HashMap orderMenu) {
+        Validator.validateDayInRange(expectedVisitDay);
+        Validator.validateCountOfMenu(orderMenu);
+
         this.expectedVisitDay = expectedVisitDay;
         this.orderMenu = orderMenu;
     }
