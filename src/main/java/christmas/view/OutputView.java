@@ -48,8 +48,22 @@ public final class OutputView {
         System.out.println(
                 OutputMessage
                         .OUTPUT_AMOUNT_FORMAT
-                        .getAmountFormat(orderInfo.calculateBenefitAmount()) + "\n"
+                        .getAmountFormat(orderInfo.getTotalBenefitAmount()) + "\n"
         );
+    }
+
+    public static void showPreviewTotalPriceAfterDiscount(OrderInfo orderInfo) {
+        System.out.println(PreviewTitle.ESTIMATED_PAYMENT_AMOUNT_AFTER_DISCOUNT);
+        System.out.println(
+                OutputMessage
+                        .OUTPUT_AMOUNT_FORMAT
+                        .getAmountFormat(orderInfo.calculateTotalAmountAfterDiscount()) + "\n"
+        );
+    }
+
+    public static void showEventBadge(OrderInfo orderInfo) {
+        System.out.println(PreviewTitle.DECEMBER_EVENT_BADGE);
+        System.out.println(orderInfo.grantBadge());
     }
 
     public static void previewEventBenefits(OrderInfo orderInfo) {
@@ -59,6 +73,7 @@ public final class OutputView {
         showPreviewGiveawayMenu(orderInfo);
         showBenefitDetail(orderInfo);
         showTotalBenefitAmount(orderInfo);
-
+        showPreviewTotalPriceAfterDiscount(orderInfo);
+        showEventBadge(orderInfo);
     }
 }
