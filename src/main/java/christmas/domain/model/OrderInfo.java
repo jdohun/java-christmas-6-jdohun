@@ -78,13 +78,21 @@ public class OrderInfo {
      * 혜택 내역 출력
      */
     public void showBenefitDetails() {
-        benefitDetails.forEach((title, amount) -> {
-            System.out.println(
-                    OutputMessage
-                            .PREVIEW_BENEFIT_DETAIL_FORMAT
-                            .getBenefitDetailFormat(title, amount)
-            );
-        });
+        if (benefitDetails.size() == 1 && benefitDetails.containsKey(DecemberEvent.NONE)) {
+            System.out.println(DecemberEvent.NONE);
+            System.out.println();
+            return;
+        }
+
+        for (Map.Entry<String, Integer> entry : benefitDetails.entrySet()) {
+            if (!entry.getKey().equals(DecemberEvent.NONE)) {
+                System.out.println(
+                        OutputMessage
+                                .PREVIEW_BENEFIT_DETAIL_FORMAT
+                                .getBenefitDetailFormat(entry.getKey(), entry.getValue())
+                );
+            }
+        }
         System.out.println();
     }
 
