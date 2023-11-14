@@ -7,7 +7,7 @@ import christmas.constant.RegularConstant;
 import christmas.constant.message.ErrorMessage;
 
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 
@@ -70,7 +70,7 @@ public final class Validator {
         }
     }
 
-    public static void validateIfOnlyBeverageOrdered(HashMap<Menu, Integer> orderMenu) {
+    public static void validateIfOnlyBeverageOrdered(Map<Menu, Integer> orderMenu) {
         Set<Menu> menus = orderMenu.keySet();
         boolean appetizer = false;
         boolean main = false;
@@ -93,13 +93,13 @@ public final class Validator {
         }
     }
 
-    public static void validateExistDuplicateMenu(HashMap<Menu, Integer> orderMenu, Menu menu) {
+    public static void validateExistDuplicateMenu(Map<Menu, Integer> orderMenu, Menu menu) {
         if (orderMenu.containsKey(menu)) {
             throw new IllegalArgumentException(ErrorMessage.ERROR_INVALID_ORDER);
         }
     }
 
-    public static void validateCountOfMenu(HashMap<Menu, Integer> orderMenu) {
+    public static void validateCountOfMenu(Map<Menu, Integer> orderMenu) {
         int totalCountOfMenus = 0;
         Collection<Integer> quantityOfEachMenu = orderMenu.values();
         for (int count : quantityOfEachMenu) {

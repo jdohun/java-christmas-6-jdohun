@@ -10,14 +10,14 @@ import java.util.Map;
 
 public class OrderInfo {
     private final int expectedVisitDay;
-    private final HashMap<Menu, Integer> orderMenu;
+    private final Map<Menu, Integer> orderMenu;
     private final int totalAmountBeforeDiscount;
     private final boolean eventEligibility;
     private final AbstractMap.SimpleEntry<Menu, Integer> giveawayMenu;
-    private final HashMap<String, Integer> benefitDetails;
+    private final Map<String, Integer> benefitDetails;
     private final int benefitAmount;
 
-    public OrderInfo(int expectedVisitDay, HashMap orderMenu) {
+    public OrderInfo(int expectedVisitDay, Map orderMenu) {
         Validator.validateDayInRange(expectedVisitDay);
         Validator.validateCountOfMenu(orderMenu);
         Validator.validateIfOnlyBeverageOrdered(orderMenu);
@@ -86,7 +86,7 @@ public class OrderInfo {
         }
 
         for (Map.Entry<String, Integer> entry : benefitDetails.entrySet()) {
-            if (!entry.getKey().equals(DecemberEvent.NONE)) {
+            if (!entry.getKey().equals(DecemberEvent.NONE) && entry.getValue() != 0) {
                 System.out.println(
                         OutputMessage
                                 .PREVIEW_BENEFIT_DETAIL_FORMAT
@@ -111,8 +111,8 @@ public class OrderInfo {
      * @return 총혜택 금액(증정 이벤트 포함)
      */
     public int calculateBenefitAmount() {
-        return benefitDetails.entrySet().stream()
-                .mapToInt(Map.Entry::getValue)
+        return benefitDetails.values().stream()
+                .mapToInt(Integer::intValue)
                 .sum();
     }
 
@@ -136,8 +136,8 @@ public class OrderInfo {
      *
      * @return 조건을 달성한 12월 이벤트 혜택 내역
      */
-    private HashMap<String, Integer> initializeBenefitDetails() {
-        HashMap<String, Integer> benefitDetails = new HashMap<>();
+    private Map<String, Integer> initializeBenefitDetails() {
+        Map<String, Integer> benefitDetails = new HashMap<>();
         AbstractMap.SimpleEntry<String, Integer> christmasDdayBenefitDetail = calculateChristmasDdayBenefitDetail();
         AbstractMap.SimpleEntry<String, Integer> giveawayEventDetail = calculateGiveawayEventDetail();
         AbstractMap.SimpleEntry<String, Integer> dailyEventDetail = checkDecemberDailyEventCategory();
