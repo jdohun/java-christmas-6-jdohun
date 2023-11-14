@@ -8,7 +8,6 @@ import christmas.constant.message.OutputMessage;
 import christmas.domain.validator.Validator;
 
 import java.util.AbstractMap;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,12 +53,9 @@ public class OrderInfo {
      * @return 할인 전 총주문 금액
      */
     private int calculateTotalAmountBeforeDiscount() {
-        int totalAmountBeforeDiscount = 0;
-        Collection<Integer> values = orderMenu.values();
-        for (int value : values) {
-            totalAmountBeforeDiscount += value;
-        }
-        return totalAmountBeforeDiscount;
+        return orderMenu.entrySet().stream()
+                .mapToInt(entry -> entry.getKey().getPrice() * entry.getValue())
+                .sum();
     }
 
     /**
@@ -104,10 +100,7 @@ public class OrderInfo {
      * 할인 전 총주문 금액이 10,000원 이상인지 확인
      */
     private boolean checkEventEligibility() {
-        if (totalAmountBeforeDiscount >= DecemberEvent.EVENT_ELIGIBILITY_AMOUNT) {
-            return true;
-        }
-        return false;
+        return totalAmountBeforeDiscount >= DecemberEvent.EVENT_ELIGIBILITY_AMOUNT;
     }
 
     /**
