@@ -66,14 +66,37 @@ public class OrderInfo {
      * 주문한 메뉴 내역과 수량을 출력
      */
     public void showMenu() {
-        orderMenu.forEach((key, value) -> {
+        orderMenu.forEach((menu, count) -> {
             System.out.println(
                     OutputMessage
                             .PREVIEW_ORDER_MENU_FORMAT
-                            .getOrderMenuFormat(key.getName(), value)
+                            .getOrderMenuFormat(menu.getName(), count)
             );
-            System.out.println();
         });
+        System.out.println();
+    }
+
+    /**
+     * 혜택 내역 출력
+     */
+    public void showBenefitDetails() {
+        benefitDetails.forEach((title, amount) -> {
+            System.out.println(
+                    OutputMessage
+                            .PREVIEW_BENEFIT_DETAIL_FORMAT
+                            .getBenefitDetailFormat(title, amount)
+            );
+        });
+        System.out.println();
+    }
+
+    /**
+     * @return 총혜택 금액
+     */
+    public int calculateBenefitAmount() {
+        return benefitDetails.entrySet().stream()
+                .mapToInt(Map.Entry::getValue)
+                .sum();
     }
 
     /**
@@ -104,15 +127,6 @@ public class OrderInfo {
         benefitDetails.put(dailyEventDetail.getKey(), dailyEventDetail.getValue());
         benefitDetails.put(specialDayEventDetail.getKey(), specialDayEventDetail.getValue());
         return benefitDetails;
-    }
-
-    /**
-     * @return 총혜택 금액
-     */
-    public int calculateBenefitAmount() {
-        return benefitDetails.entrySet().stream()
-                .mapToInt(Map.Entry::getValue)
-                .sum();
     }
 
     /**
