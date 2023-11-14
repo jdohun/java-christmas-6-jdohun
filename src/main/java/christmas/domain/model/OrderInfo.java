@@ -97,7 +97,17 @@ public class OrderInfo {
     }
 
     /**
-     * @return 총혜택 금액
+     * @return 총할인 금액(증정 이벤트 제외)
+     */
+    public int calculateTotalDiscountAmount() {
+        return benefitDetails.entrySet().stream()
+                .filter(entry -> !entry.getKey().equals(DecemberEvent.GIVEAWAY_EVENT))
+                .mapToInt(Map.Entry::getValue)
+                .sum();
+    }
+
+    /**
+     * @return 총혜택 금액(증정 이벤트 포함)
      */
     public int calculateBenefitAmount() {
         return benefitDetails.entrySet().stream()
@@ -106,10 +116,10 @@ public class OrderInfo {
     }
 
     /**
-     * @return 할인 후 예상 결제 금액
+     * @return 할인 후 예상 결제 금액 = 할인 전 총금액 + 총할인 금액(증정 이벤트 제외)
      */
     public int calculateTotalAmountAfterDiscount() {
-        return this.totalAmountBeforeDiscount + benefitAmount;
+        return this.totalAmountBeforeDiscount + calculateTotalDiscountAmount();
     }
 
     /**
@@ -184,7 +194,7 @@ public class OrderInfo {
      */
     private AbstractMap.SimpleEntry<String, Integer> calculateDecemberDailyEventDiscountAmount(String dailyEventCategory, String discountMenuCategory) {
         int countOfDiscountMenu = orderMenu.entrySet().stream()
-                .filter(entry -> entry.getKey().getCategory() == discountMenuCategory)
+                .filter(entry -> entry.getKey().getCategory().equals(discountMenuCategory))
                 .mapToInt(Map.Entry::getValue)
                 .sum();
 
@@ -198,13 +208,11 @@ public class OrderInfo {
      */
     private AbstractMap.SimpleEntry<String, Integer> checkDecemberDailyEventCategory() {
         if (eventEligibility) {
-            if (expectedVisitDay % 7 != DecemberEvent.FRIDAY || expectedVisitDay % 7 != DecemberEvent.SATURDAY) { // 평일
-                return calculateDecemberDailyEventDiscountAmount(DecemberEvent.WEEKDAY_DISCOUNT, MenuCategory.DESSERT);
-            }
-
-            if (expectedVisitDay == DecemberEvent.FRIDAY || expectedVisitDay % 7 == DecemberEvent.SATURDAY) { // 주말(금,토)
+            if (expectedVisitDay % 7 == DecemberEvent.FRIDAY || expectedVisitDay % 7 == DecemberEvent.SATURDAY) { // 주말(금,토)
                 return calculateDecemberDailyEventDiscountAmount(DecemberEvent.WEEKEND_DISCOUNT, MenuCategory.MAIN);
             }
+            // 평일
+            return calculateDecemberDailyEventDiscountAmount(DecemberEvent.WEEKDAY_DISCOUNT, MenuCategory.DESSERT);
         }
         return calculateDecemberDailyEventDiscountAmount(DecemberEvent.NONE, MenuCategory.NONE);
     }
