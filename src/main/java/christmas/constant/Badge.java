@@ -7,9 +7,9 @@ public enum Badge {
         2만 원 이상: 산타
      */
     NONE("없음", 0),
-    STAR("별", 5_000),
-    TREE("트리", 10_000),
-    SANTA("산타", 20_000);
+    STAR("별", -5_000),
+    TREE("트리", -10_000),
+    SANTA("산타", -20_000);
 
     private final String name;
     private final int condition;
@@ -23,19 +23,20 @@ public enum Badge {
         return condition;
     }
 
-    public static Badge getBadgeForAmount(int amount) {
-        if (amount >= SANTA.getCondition()) {
-            return SANTA;
-        }
+    public String getName() {
+        return name;
+    }
 
-        if (amount >= TREE.getCondition()) {
-            return TREE;
+    public static String getBadgeByTotalBenefitAmount(int totalBenefitAmount) {
+        if (totalBenefitAmount <= SANTA.getCondition()) {
+            return SANTA.getName();
         }
-
-        if (amount >= STAR.getCondition()) {
-            return STAR;
+        if (totalBenefitAmount <= TREE.getCondition()) {
+            return TREE.getName();
         }
-
-        return NONE;
+        if (totalBenefitAmount <= STAR.getCondition()) {
+            return STAR.getName();
+        }
+        return NONE.getName();
     }
 }
