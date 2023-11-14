@@ -20,6 +20,7 @@ public class OrderInfo {
     public OrderInfo(int expectedVisitDay, HashMap orderMenu) {
         Validator.validateDayInRange(expectedVisitDay);
         Validator.validateCountOfMenu(orderMenu);
+        Validator.validateIfOnlyBeverageOrdered(orderMenu);
 
         this.expectedVisitDay = expectedVisitDay;
         this.orderMenu = orderMenu;
