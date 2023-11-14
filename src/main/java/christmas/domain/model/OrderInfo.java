@@ -1,14 +1,16 @@
 package christmas.domain.model;
 
+import christmas.constant.DecemberEvent;
 import christmas.constant.DiscountConstant;
-import christmas.constant.EventConstant;
 import christmas.constant.Menu;
+import christmas.constant.MenuCategory;
 import christmas.constant.message.OutputMessage;
 import christmas.domain.validator.Validator;
 
 import java.util.AbstractMap;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 public class OrderInfo {
     private final int expectedVisitDay;
@@ -16,7 +18,7 @@ public class OrderInfo {
     private final int totalAmountBeforeDiscount;
     private final boolean eventEligibility;
     private final AbstractMap.SimpleEntry<Menu, Integer> giveawayMenu;
-
+    private final HashMap<String, Integer> benefitDetails;
 
     public OrderInfo(int expectedVisitDay, HashMap orderMenu) {
         Validator.validateDayInRange(expectedVisitDay);
@@ -27,7 +29,7 @@ public class OrderInfo {
         this.totalAmountBeforeDiscount = calculateTotalAmountBeforeDiscount();
         this.eventEligibility = checkEventEligibility();
         this.giveawayMenu = checkGiveawayEventEligibility();
-
+        this.benefitDetails = initializeBenefitDetails();
     }
 
     public int getTotalAmountBeforeDiscount() {
@@ -39,12 +41,18 @@ public class OrderInfo {
     }
 
 
+    /**
+     * @return 예상 방문 날짜를 포함한 12월 이벤트 미리 보기 제목
+     */
     public String getIncludingExpectedVisitDayPreviewTitle() {
         return OutputMessage
                 .PREVIEW_EVENT_BENEFITS_FORMAT
                 .getIncludingAnIntMessage(expectedVisitDay);
     }
 
+    /**
+     * @return 할인 전 총주문 금액
+     */
     private int calculateTotalAmountBeforeDiscount() {
         int totalAmountBeforeDiscount = 0;
         Collection<Integer> values = orderMenu.values();
@@ -54,6 +62,9 @@ public class OrderInfo {
         return totalAmountBeforeDiscount;
     }
 
+    /**
+     * 주문한 메뉴 내역과 수량을 출력
+     */
     public void showMenu() {
         orderMenu.forEach((key, value) -> {
             System.out.println(
@@ -65,34 +76,128 @@ public class OrderInfo {
         });
     }
 
-    // 할인 전 총주문 금액이 10,000원 이상인지 확인
+    /**
+     * 할인 이벤트 조건을 달성했는지 확인
+     * 할인 전 총주문 금액이 10,000원 이상인지 확인
+     */
     private boolean checkEventEligibility() {
-        if (totalAmountBeforeDiscount >= EventConstant.EVENT_ELIGIBILITY_AMOUNT) {
+        if (totalAmountBeforeDiscount >= DecemberEvent.EVENT_ELIGIBILITY_AMOUNT) {
             return true;
         }
         return false;
     }
 
-    // 증정이벤트
+    /**
+     * 조건을 달성한 12월 이벤트 혜택 내역을 조사
+     *
+     * @return 조건을 달성한 12월 이벤트 혜택 내역
+     */
+    private HashMap<String, Integer> initializeBenefitDetails() {
+        HashMap<String, Integer> benefitDetails = new HashMap<>();
+        AbstractMap.SimpleEntry<String, Integer> christmasDdayBenefitDetail = calculateChristmasDdayBenefitDetail();
+        AbstractMap.SimpleEntry<String, Integer> giveawayEventDetail = calculateGiveawayEventDetail();
+        AbstractMap.SimpleEntry<String, Integer> dailyEventDetail = checkDecemberDailyEventCategory();
+        AbstractMap.SimpleEntry<String, Integer> specialDayEventDetail = checkDecemberEventSpecialDay();
+
+        benefitDetails.put(christmasDdayBenefitDetail.getKey(), christmasDdayBenefitDetail.getValue());
+        benefitDetails.put(giveawayEventDetail.getKey(), giveawayEventDetail.getValue());
+        benefitDetails.put(dailyEventDetail.getKey(), dailyEventDetail.getValue());
+        benefitDetails.put(specialDayEventDetail.getKey(), specialDayEventDetail.getValue());
+        return benefitDetails;
+    }
+
+    /**
+     * @return 총혜택 금액
+     */
+    public int calculateBenefitAmount() {
+        return benefitDetails.entrySet().stream()
+                .mapToInt(Map.Entry::getValue)
+                .sum();
+    }
+
+    /**
+     * 증정 이벤트 조건을 달성했는지 확인
+     *
+     * @return 증정 메뉴, 수량
+     */
     private AbstractMap.SimpleEntry<Menu, Integer> checkGiveawayEventEligibility() {
-        if (eventEligibility && totalAmountBeforeDiscount >= EventConstant.EVENT_GIVEAWAY_ELIGIBILITY_AMOUNT) {
+        if (eventEligibility && totalAmountBeforeDiscount >= DecemberEvent.EVENT_GIVEAWAY_ELIGIBILITY_AMOUNT) {
             return new AbstractMap.SimpleEntry<>(Menu.GIVEAWAY_CHAMPAGNE, 1);
         }
         return new AbstractMap.SimpleEntry<>(Menu.GIVEAWAY_NONE, 0);
     }
 
-    private int calculateChristmasDdayDiscountAmount() {
-        if (eventEligibility && expectedVisitDay <= EventConstant.CHRISTMAS) {
-            return DiscountConstant.CHRISTMAS_D_DAY_DISCOUNT_AMOUNT_INITIAL
-                    + DiscountConstant.CHRISTMAS_D_DAY_DISCOUNT_AMOUNT_ADD * (expectedVisitDay-1);
+    /**
+     * 증정 이벤트 혜택 금액을 계산
+     *
+     * @return 혜택 이름, 혜택 금액
+     */
+    private AbstractMap.SimpleEntry<String, Integer> calculateGiveawayEventDetail() {
+        if (eventEligibility && totalAmountBeforeDiscount >= DecemberEvent.EVENT_GIVEAWAY_ELIGIBILITY_AMOUNT) {
+            return new AbstractMap.SimpleEntry<>(DecemberEvent.GIVEAWAY_EVENT, Menu.GIVEAWAY_CHAMPAGNE.getPrice());
         }
-        return 0;
+        return new AbstractMap.SimpleEntry<>(DecemberEvent.NONE, 0);
     }
 
-    // 12월 이벤트 할인
-    // 할인 전 총주문 금액이 10,000원 이상인지 확인
-    // 평일인지 주말인지 별이 있는 날인지 확인
-    // 해당하는 할인 혜택 적용
+    /**
+     * 크리스마스 디데이 이벤트 조건을 달성했는지 확인
+     *
+     * @return 혜택 이름, 혜택 금액
+     */
+    private AbstractMap.SimpleEntry<String, Integer> calculateChristmasDdayBenefitDetail() {
+        if (eventEligibility && expectedVisitDay <= DecemberEvent.CHRISTMAS) {
+            return new AbstractMap.SimpleEntry<>(DecemberEvent.CHRISTMAS_D_DAY_DISCOUNT,
+                    DiscountConstant.CHRISTMAS_D_DAY_DISCOUNT_AMOUNT_INITIAL
+                            + DiscountConstant.CHRISTMAS_D_DAY_DISCOUNT_AMOUNT_ADD * (expectedVisitDay - 1));
+        }
+        return new AbstractMap.SimpleEntry<>(DecemberEvent.NONE, 0);
+    }
+
+    /**
+     * 해당하는 12월 일일 이벤트 혜택 금액을 계산
+     *
+     * @return 일일 혜택 이름, 혜택 금액
+     */
+    private AbstractMap.SimpleEntry<String, Integer> calculateDecemberDailyEventDiscountAmount(String dailyEventCategory, String discountMenuCategory) {
+        int countOfDiscountMenu = orderMenu.entrySet().stream()
+                .filter(entry -> entry.getKey().getCategory() == discountMenuCategory)
+                .mapToInt(Map.Entry::getValue)
+                .sum();
+
+        return new AbstractMap.SimpleEntry<>(dailyEventCategory, countOfDiscountMenu * DiscountConstant.DAILY_DISCOUNT_AMOUNT);
+    }
+
+    /**
+     * 12월 일일 이벤트 조건을 달성했는지 확인
+     *
+     * @return calculateDecemberEventDiscountAmount(일일 혜택 구분, 혜택 메뉴 구분)
+     */
+    private AbstractMap.SimpleEntry<String, Integer> checkDecemberDailyEventCategory() {
+        if (eventEligibility) {
+            if (expectedVisitDay % 7 != DecemberEvent.FRIDAY || expectedVisitDay % 7 != DecemberEvent.SATURDAY) { // 평일
+                return calculateDecemberDailyEventDiscountAmount(DecemberEvent.WEEKDAY_DISCOUNT, MenuCategory.DESSERT);
+            }
+
+            if (expectedVisitDay == DecemberEvent.FRIDAY || expectedVisitDay % 7 == DecemberEvent.SATURDAY) { // 주말(금,토)
+                return calculateDecemberDailyEventDiscountAmount(DecemberEvent.WEEKEND_DISCOUNT, MenuCategory.MAIN);
+            }
+        }
+        return calculateDecemberDailyEventDiscountAmount(DecemberEvent.NONE, MenuCategory.NONE);
+    }
+
+    /**
+     * 12월 일일 이벤트 중 특별 조건을 달성했는지 확인
+     *
+     * @return 일일 혜택 이름, 혜택 금액
+     */
+    private AbstractMap.SimpleEntry<String, Integer> checkDecemberEventSpecialDay() {
+        if (eventEligibility) {
+            if (expectedVisitDay % 7 == DecemberEvent.SUNDAY || expectedVisitDay == DecemberEvent.CHRISTMAS) { // 별이 있는 날(일요일, 크리스마스)
+                return new AbstractMap.SimpleEntry<>(DecemberEvent.SPECIAL_DISCOUNT, DiscountConstant.SPECIAL_DISCOUNT_AMOUNT);
+            }
+        }
+        return new AbstractMap.SimpleEntry<>(DecemberEvent.NONE, 0);
+    }
 
     // 배지 부여
     // 총혜택 금액 계산
