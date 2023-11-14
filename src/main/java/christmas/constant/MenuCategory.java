@@ -9,4 +9,5 @@ public final class MenuCategory {
     public static final String DESSERT = "디저트";
     public static final String BEVERAGE = "음료";
     public static final String GIVEAWAY = "증정";
+    public static final String NONE = "없음";
 }
