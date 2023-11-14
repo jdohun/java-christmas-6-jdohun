@@ -215,6 +215,10 @@ public class OrderInfo {
         return new AbstractMap.SimpleEntry<>(DecemberEvent.NONE, 0);
     }
 
+    /**
+     * 총혜택 금액 기준에 따라 배지 부여
+     * @return 배지 이름
+     */
     public String grantBadge() {
         return Badge.getBadgeByTotalBenefitAmount(benefitAmount);
     }
