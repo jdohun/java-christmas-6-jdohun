@@ -1,9 +1,6 @@
 package christmas.domain.model;
 
-import christmas.constant.DecemberEvent;
-import christmas.constant.DiscountConstant;
-import christmas.constant.Menu;
-import christmas.constant.MenuCategory;
+import christmas.constant.*;
 import christmas.constant.message.OutputMessage;
 import christmas.domain.validator.Validator;
 
@@ -18,6 +15,7 @@ public class OrderInfo {
     private final boolean eventEligibility;
     private final AbstractMap.SimpleEntry<Menu, Integer> giveawayMenu;
     private final HashMap<String, Integer> benefitDetails;
+    private final int benefitAmount;
 
     public OrderInfo(int expectedVisitDay, HashMap orderMenu) {
         Validator.validateDayInRange(expectedVisitDay);
@@ -29,16 +27,20 @@ public class OrderInfo {
         this.eventEligibility = checkEventEligibility();
         this.giveawayMenu = checkGiveawayEventEligibility();
         this.benefitDetails = initializeBenefitDetails();
+        this.benefitAmount = calculateBenefitAmount();
     }
 
     public int getTotalAmountBeforeDiscount() {
         return totalAmountBeforeDiscount;
     }
 
+    public int getTotalBenefitAmount() {
+        return benefitAmount;
+    }
+
     public AbstractMap.SimpleEntry<Menu, Integer> getGiveawayMenu() {
         return giveawayMenu;
     }
-
 
     /**
      * @return 예상 방문 날짜를 포함한 12월 이벤트 미리 보기 제목
@@ -93,6 +95,13 @@ public class OrderInfo {
         return benefitDetails.entrySet().stream()
                 .mapToInt(Map.Entry::getValue)
                 .sum();
+    }
+
+    /**
+     * @return 할인 후 예상 결제 금액
+     */
+    public int calculateTotalAmountAfterDiscount() {
+        return this.totalAmountBeforeDiscount + benefitAmount;
     }
 
     /**
@@ -206,9 +215,8 @@ public class OrderInfo {
         return new AbstractMap.SimpleEntry<>(DecemberEvent.NONE, 0);
     }
 
-    // 배지 부여
-    // 총혜택 금액 계산
-    // 크리스마스 디데이 할인 + 이벤트 할인 + 증정이벤트(샴페인-25,000)
-    // 기준에 따라 배지부여
+    public String grantBadge() {
+        return Badge.getBadgeByTotalBenefitAmount(benefitAmount);
+    }
 
 }
