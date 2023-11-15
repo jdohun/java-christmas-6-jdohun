@@ -138,6 +138,14 @@ class OrderInfoTest {
 
         assertThat(orderInfo.getBadgeName())
                 .isEqualTo(DecemberEvent.NONE);
+
+        // Verify
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        orderInfo.showBenefitDetails();
+
+        assertThat(outputStream.toString()).contains(DecemberEvent.NONE);
     }
 
     @DisplayName("할인 전 총주문 금액이 10,000원 이상이고 날짜가 1~크리스마스(25) 이면 디데이 이벤트가 적용된다.")
@@ -208,8 +216,7 @@ class OrderInfoTest {
         expectedOutput.append(OutputMessage.PREVIEW_BENEFIT_DETAIL_FORMAT.getBenefitDetailFormat(
                 DecemberEvent.WEEKEND_DISCOUNT, DiscountConstant.DAILY_DISCOUNT_AMOUNT * (countOfChristmasPasta + countOfSeafoodPasta)));
 
-        assertThat(outputStream.toString())
-                .contains(expectedOutput.toString());
+        assertThat(outputStream.toString()).contains(expectedOutput.toString());
     }
 
     @DisplayName("금요일과 토요일(7로 나눈 나머지가 1 또는 2)에 메인 메뉴를 주문하지 않으면 혜택이 포함되지 않는다.")
@@ -231,12 +238,7 @@ class OrderInfoTest {
 
         orderInfo.showBenefitDetails();
 
-        StringBuilder expectedOutput = new StringBuilder();
-        expectedOutput.append(OutputMessage.PREVIEW_BENEFIT_DETAIL_FORMAT.getBenefitDetailFormat(
-                DecemberEvent.WEEKEND_DISCOUNT, DiscountConstant.DAILY_DISCOUNT_AMOUNT * (countOfIceCream + countOfTapas)));
-
-        assertThat(outputStream.toString())
-                .doesNotContain(expectedOutput.toString());
+        assertThat(outputStream.toString()).doesNotContain(DecemberEvent.WEEKEND_DISCOUNT);
     }
 
     @DisplayName("금요일과 토요일(7로 나눈 나머지가 1 과 2)이 아닌 평일은 평일 할인(디저트 메뉴 할인)을 받는다.")
@@ -285,24 +287,20 @@ class OrderInfoTest {
 
         orderInfo.showBenefitDetails();
 
-        StringBuilder expectedOutput = new StringBuilder();
-        expectedOutput.append(OutputMessage.PREVIEW_BENEFIT_DETAIL_FORMAT.getBenefitDetailFormat(
-                DecemberEvent.WEEKDAY_DISCOUNT, DiscountConstant.DAILY_DISCOUNT_AMOUNT * (countOfCaesarSalad + countOfZeroCoke)));
-
-        assertThat(outputStream.toString()).doesNotContain(expectedOutput.toString());
+        assertThat(outputStream.toString()).doesNotContain(DecemberEvent.WEEKDAY_DISCOUNT);
     }
 
     @DisplayName("일요일(7로 나눈 나머지가 3) 이거나 크리스마스(25)는 특별 할인을 받는다.")
     @ParameterizedTest
-    @CsvSource(value = {"3", "10", "17", "24", "25", "31"})
-    void checkWeekdayWithSpecialDayEventEventBySpecialDay(int sunday) {
+    @ValueSource(ints = {3, 10, 17, 24, 25, 31})
+    void checkSpecialDayEventBySpecialDay(int specialDay) {
         // <디저트> 아이스크림(5,000)
         // Arrange
         HashMap<Menu, Integer> sample = new HashMap<>();
         sample.put(Menu.ICE_CREAM, 2);
 
         // Act
-        OrderInfo orderInfo = new OrderInfo(sunday, sample);
+        OrderInfo orderInfo = new OrderInfo(specialDay, sample);
 
         // Verify
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -317,9 +315,30 @@ class OrderInfoTest {
         assertThat(outputStream.toString()).contains(expectedOutput.toString());
     }
 
+    @DisplayName("일요일(7로 나눈 나머지가 3) 과 크리스마스(25)가 아니면 특별 할인을 받지 않는다.")
+    @ParameterizedTest
+    @ValueSource(ints = {1,2,4,5,6,7,8,9,11,12,13,14,15,16,18,19,20,21,22,23,26,27,28,29,30})
+    void checkSpecialDayEventByNotSpecialDay(int notSpecialDay) {
+        // <디저트> 아이스크림(5,000)
+        // Arrange
+        HashMap<Menu, Integer> sample = new HashMap<>();
+        sample.put(Menu.ICE_CREAM, 2);
+
+        // Act
+        OrderInfo orderInfo = new OrderInfo(notSpecialDay, sample);
+
+        // Verify
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        orderInfo.showBenefitDetails();
+
+        assertThat(outputStream.toString()).doesNotContain(DecemberEvent.SPECIAL_DISCOUNT);
+    }
+
     @DisplayName("할인 전 총주문 금액이 120,000원 이상이면 샴페인 1개를 증정 받는다.")
     @Test
-    void checkGiveawayEventByTotalAmount120_000BeforeDiscount() {
+    void checkGiveawayEventByOverTotalAmount120_000BeforeDiscount() {
         // <디저트> 아이스크림(5,000)
         // Arrange
         HashMap<Menu, Integer> sample = new HashMap<>();
@@ -343,6 +362,30 @@ class OrderInfoTest {
                 .getBenefitDetailFormat(DecemberEvent.GIVEAWAY_EVENT, Menu.GIVEAWAY_CHAMPAGNE.getPrice()));
 
         assertThat(outputStream.toString()).contains(expectedOutput.toString());
+    }
+
+    @DisplayName("할인 전 총주문 금액이 120,000원 미만이면 증정 이벤트 혜택을 받지 않는다.")
+    @Test
+    void checkGiveawayEventByUnderTotalAmount120_000BeforeDiscount() {
+        // <디저트> 아이스크림(5,000)
+        // Arrange
+        HashMap<Menu, Integer> sample = new HashMap<>();
+        sample.put(Menu.T_BONE_STEAK, 1);
+
+        // Act
+        OrderInfo orderInfo = new OrderInfo(1, sample);
+
+        // Verify
+        assertThat(orderInfo.getGiveawayMenu())
+                .isEqualTo(new AbstractMap.SimpleEntry<Menu, Integer>(Menu.GIVEAWAY_NONE,0) {
+                });
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outputStream));
+
+        orderInfo.showBenefitDetails();
+
+        assertThat(outputStream.toString()).doesNotContain(DecemberEvent.GIVEAWAY_EVENT);
     }
 
     @DisplayName("총혜택 금액은 증정 이벤트 가격을 포함하고 총할인 금액은 증정 이벤트 가격을 제외한다.")
