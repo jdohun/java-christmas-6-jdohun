@@ -63,7 +63,7 @@ public final class OutputView {
 
     public static void showEventBadge(OrderInfo orderInfo) {
         System.out.println(PreviewTitle.DECEMBER_EVENT_BADGE);
-        System.out.println(orderInfo.grantBadge());
+        System.out.println(orderInfo.getBadgeName());
     }
 
     public static void previewEventBenefits(OrderInfo orderInfo) {
