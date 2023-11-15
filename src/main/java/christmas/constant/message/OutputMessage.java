@@ -14,10 +14,6 @@ public enum OutputMessage {
         this.messageFormat = messageFormat;
     }
 
-    public String getMessage() {
-        return this.messageFormat;
-    }
-
     public String getIncludingAnIntMessage(int value) {
         return String.format(this.messageFormat, value);
     }
