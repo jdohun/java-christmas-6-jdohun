@@ -27,16 +27,16 @@ public enum Badge {
         return name;
     }
 
-    public static String getBadgeByTotalBenefitAmount(int totalBenefitAmount) {
+    public static Badge getBadgeByTotalBenefitAmount(int totalBenefitAmount) {
         if (totalBenefitAmount <= SANTA.getCondition()) {
-            return SANTA.getName();
+            return SANTA;
         }
         if (totalBenefitAmount <= TREE.getCondition()) {
-            return TREE.getName();
+            return TREE;
         }
         if (totalBenefitAmount <= STAR.getCondition()) {
-            return STAR.getName();
+            return STAR;
         }
-        return NONE.getName();
+        return NONE;
     }
 }
