@@ -16,6 +16,7 @@ public class OrderInfo {
     private final AbstractMap.SimpleEntry<Menu, Integer> giveawayMenu;
     private final Map<String, Integer> benefitDetails;
     private final int benefitAmount;
+    private final Badge badge;
 
     public OrderInfo(int expectedVisitDay, Map orderMenu) {
         Validator.validateDayInRange(expectedVisitDay);
@@ -29,6 +30,7 @@ public class OrderInfo {
         this.giveawayMenu = checkGiveawayEventEligibility();
         this.benefitDetails = initializeBenefitDetails();
         this.benefitAmount = calculateBenefitAmount();
+        this.badge = grantBadge();
     }
 
     public int getTotalAmountBeforeDiscount() {
@@ -234,10 +236,18 @@ public class OrderInfo {
 
     /**
      * 총혜택 금액 기준에 따라 배지 부여
+     * @return Badge
+     */
+    private Badge grantBadge() {
+        return Badge.getBadgeByTotalBenefitAmount(benefitAmount);
+    }
+
+    /**
+     * 부여 받은 배지의 이름을 반환
      * @return 배지 이름
      */
-    public String grantBadge() {
-        return Badge.getBadgeByTotalBenefitAmount(benefitAmount);
+    public String getBadgeName() {
+        return this.badge.getName();
     }
 
 }
